@@ -29,6 +29,8 @@
 
 getgenv().LauncherVersion = "1.0"
 
-local NekodexLib = loadstring()
+local NekodexLib = loadstring(game:HttpGet("https://github.com/Strixial/Nekodex/raw/main/NekodexLib.lua"))()
 
-local 
+local NekodexGames = game:HttpGet("https://github.com/Strixial/Nekodex/raw/main/NekodexGames.json")
+
+NekodexGames = NekodexLib
