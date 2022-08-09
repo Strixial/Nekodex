@@ -1,4 +1,6 @@
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 local HighlightColor3 = Color3.fromRGB(249, 150, 255)
 
@@ -51,10 +53,53 @@ local MiscTab = Window.New({
 	Title = "Miscellaneous"
 })
 
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+	Character = char
+end)
+
+local function GetMurderer()
+	for i, v in pairs(Players:GetPlayers()) do
+		if v.Backpack.Knife or v.Character.Knife then
+			return v
+		end
+	end
+end
+
+local function GetSheriff()
+	for i, v in pairs(Players:GetPlayers()) do
+		if v.Backpack.Gun or v.Character.Gun then
+			return v
+		end
+	end
+end
+
+local function KillPlayerAsMurd(Player)
+	if not Character.Knife then
+		if not Player.Backpack.Knife then
+			return nil
+		else
+			Player.Backpack.Knife.Parent = Character
+		end
+	end
+
+	Player.Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame + (Character.HumanoidRootPart.CFrame.LookVector * 2)
+	Character.Knife.Stab:FireServer("Slash")
+end
+
 local KillAllButton = MurdTab.Button({
 	Text = "Kill All",
 	Callback = function()
-		print("kill all real")
+		if not Character.Knife or not Player.Backpack.Knife then print("Not murderer!") return end
+		for i, v in pairs(Players:GetPlayers()) do
+			if v ~= LocalPlayer then
+				print("Killing "..v.Name.."...")
+				KillPlayerAsMurd(v)
+				task.wait(0.1)
+			end
+		end
 	end,
 	Menu = {
 		Information = function(self)
