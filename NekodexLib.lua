@@ -49,9 +49,9 @@ end
 local HTTPService = game:GetService("HttpService")
 function NekodexLib.TransformJSON(obj)
     if typeof(obj) == "string" then
-        return HTTPService:DecodeJSON(obj)
+        return HTTPService:JSONDecode(obj)
     else
-        return HTTPService:EncodeJSON(obj)
+        return HTTPService:JSONEncode(obj)
     end
 end
 
