@@ -62,7 +62,7 @@ end)
 
 local function GetMurderer()
 	for i, v in pairs(Players:GetPlayers()) do
-		if v.Backpack.Knife or v.Character.Knife then
+		if v.Backpack:FindFirstChild("Knife") or v.Character:FindFirstChild("Knife") then
 			return v
 		end
 	end
@@ -70,7 +70,7 @@ end
 
 local function GetSheriff()
 	for i, v in pairs(Players:GetPlayers()) do
-		if v.Backpack.Gun or v.Character.Gun then
+		if v.Backpack:FindFirstChild("Gun") or v.Character:FindFirstChild("Gun") then
 			return v
 		end
 	end
@@ -89,10 +89,25 @@ local function KillPlayerAsMurd(Player)
 	Character.Knife.Stab:FireServer("Slash")
 end
 
+local function ToggleShaderESP(Player, State, Color)
+	if State then
+		local Highlight = Instance.new("Highlight")
+		Highlight.OutlineColor = Color
+		Highlight.FillColor = Color
+		Highlight.FillTransparency = 0.75
+		Highlight.Name = "nekodex_esp"
+		Highlight.Parent = Player.Character
+	else
+		local Highlight = Player.Character:FindFirstChild("nekodex_esp")
+		if not Highlight then return end
+		Highlight:Destroy()
+	end
+end
+
 local KillAllButton = MurdTab.Button({
 	Text = "Kill All",
 	Callback = function()
-		if not Character.Knife or not Player.Backpack.Knife then print("Not murderer!") return end
+		if not Character:FindFirstChild("Knife") or not Player.Backpack:FindFirstChild("Knife") then print("Not murderer!") return end
 		for i, v in pairs(Players:GetPlayers()) do
 			if v ~= LocalPlayer then
 				print("Killing "..v.Name.."...")
