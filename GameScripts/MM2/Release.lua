@@ -2,7 +2,14 @@ local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinl
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
-local HighlightColor3 = Color3.fromRGB(249, 150, 255)
+local HighlightColor3 = getgenv().NekodexUIColor or Color3.fromRGB(249, 150, 255)
+
+getgenv().RuntimeData = {}
+getgenv().RuntimeData.ESPData = {
+	Sheriff = false,
+	Murd = false,
+	Inno = false
+}
 
 local Window = Material.Load({
 	Title = "Nekodex - Murder Mystery 2",
@@ -60,6 +67,8 @@ LocalPlayer.CharacterAdded:Connect(function(char)
 	Character = char
 end)
 
+local SheriffPlayer, MurdererPlayer
+
 local function GetMurderer()
 	for i, v in pairs(Players:GetPlayers()) do
 		if v.Backpack:FindFirstChild("Knife") or v.Character:FindFirstChild("Knife") then
@@ -76,10 +85,15 @@ local function GetSheriff()
 	end
 end
 
-local function KillPlayerAsMurd(Player)
-	if not Character.Knife then
-		if not Player.Backpack.Knife then
-			return nil
+local function RefreshPlayers()
+	SheriffPlayer = GetSheriff()
+	MurdererPlayer = GetMurderer()
+end
+
+local function KillPlayerAsMurd(Player, HideKnifeAfter)
+	if not Character["Knife"] then
+		if not Player.Backpack["Knife"] then
+			return 0
 		else
 			Player.Backpack.Knife.Parent = Character
 		end
@@ -87,6 +101,17 @@ local function KillPlayerAsMurd(Player)
 
 	Player.Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame + (Character.HumanoidRootPart.CFrame.LookVector * 2)
 	Character.Knife.Stab:FireServer("Slash")
+	if HideKnifeAfter then
+		task.delay(0.2, function()
+			if Character["Knife"] then
+				Character.Knife.Parent = Player.Backpack
+			else
+				return 0
+			end
+		end)
+	end
+
+	return 1
 end
 
 local function ToggleShaderESP(Player, State, Color)
@@ -159,3 +184,34 @@ local SheriffChipset = SheriffTab.ChipSet({
 	}
 })
 
+-- Render tab
+
+local ESPChipset = RenderTab.ChipSet({
+	Text = "ESP",
+	Callback = function(Chipset)
+		for i, v in pairs(Chipset) do
+			if i == "Sheriff ESP" then
+				getgenv().RuntimeData.ESPData.Sheriff = v
+			elseif i == "Murderer ESP" then
+				getgenv().RuntimeData.ESPData.Murd = v
+			else
+				getgenv().RunService.ESPData.Inno = v
+			end
+		end
+	end,
+	Options = {
+		["Sheriff ESP"] = false,
+		["Murderer ESP"] = false,
+		["Innocents ESP"] = false
+	}
+})
+
+-- Server tab
+
+local ServerChipset = ServerTab.ChipSet({
+	Text = "Server",
+	Callback = function(Chipset) end,
+	Options = {
+		["Chat Roles"] = false
+	}
+})
