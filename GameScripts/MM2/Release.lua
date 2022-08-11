@@ -206,6 +206,11 @@ local ESPChipset = RenderTab.ChipSet({
 	}
 })
 
+-- ESP Render thread
+task.defer(function()
+	
+end)
+
 -- Server tab
 
 local ServerChipset = ServerTab.ChipSet({
