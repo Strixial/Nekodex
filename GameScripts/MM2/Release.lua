@@ -132,7 +132,7 @@ end
 local KillAllButton = MurdTab.Button({
 	Text = "Kill All",
 	Callback = function()
-		if not Character:FindFirstChild("Knife") or not Player.Backpack:FindFirstChild("Knife") then print("Not murderer!") return end
+		if Character["Knife"] == nil or Player.Backpack["Knife"] == nil then print("Not murderer!") return end
 		for i, v in pairs(Players:GetPlayers()) do
 			if v ~= LocalPlayer then
 				print("Killing "..v.Name.."...")
