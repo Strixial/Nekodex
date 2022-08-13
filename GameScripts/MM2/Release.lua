@@ -1,4 +1,5 @@
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
+local NekodexLib = loadstring(game:HttpGet("https://github.com/Strixial/Nekodex/raw/main/NekodexLib.lua"))()
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
@@ -207,7 +208,7 @@ local ESPChipset = RenderTab.ChipSet({
 })
 
 -- ESP Render thread
-task.defer(function()
+NekodexLib.RunLoops:BindToRenderStep(function()
 	
 end)
 
