@@ -3,7 +3,7 @@ local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinl
 local HighlightColor3 = getgenv().NekodexUIColor or Color3.fromRGB(249, 150, 255)
 
 local Window = Material.Load({
-	Title = "Astolfoware - Murder Mystery 2",
+	Title = "Nekodex - Murder Mystery 2",
 	Style = 3,
 	SizeX = 200,
 	SizeY = 350,
