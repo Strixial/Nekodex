@@ -126,12 +126,10 @@ local function KillPlayer(Player)
     end
 end
 
+-------------------- COMBAT TAB -----------------------
+
 local CombatTab = Window.New({
     Title = "Combat"
-})
-
-local TargetTab = Window.New({
-    Title = "Target"
 })
 
 CombatTab.Button({
@@ -144,6 +142,10 @@ CombatTab.Button({
 })
 
 --------------------- TARGET TAB ------------------------
+
+local TargetTab = Window.New({
+    Title = "Target"
+})
 
 local TargetTabPlayer = nil
 
