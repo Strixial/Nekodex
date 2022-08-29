@@ -68,6 +68,7 @@ local function KillPlayer(Player)
     local CurrentGun = LocalPlayer.Backpack:FindFirstChild("Remington 870") or LocalCharacter:FindFirstChild("Remington 870") or nil
 
     if not CurrentGun then
+        print("No gun, getting rem...")
         Remotes.ItemHandler:InvokeServer(PrisonItems.rem)
         CurrentGun = LocalPlayer.Backpack:WaitForChild("Remington 870")
     end
@@ -75,43 +76,44 @@ local function KillPlayer(Player)
     local TargetChar = Player.Character
 
     -- Perform delicate brain surgery upon our target (they fell asleep first at the sleepover 😂)
-    Remotes.ShootEvent:FireServer({
+    Remotes.ShootEvent:FireServer(
         {
-            ["RayObject"] = Ray.new(TargetChar.Head.Position, TargetChar.Head.Position),
-            ["Distance"] = 0,
-            ["CFrame"] = CFrame.new(),
-            ["Hit"] = TargetChar.Head
+            {
+                ["RayObject"] = Ray.new(Vector3.zero, Vector3.zero),
+                ["Distance"] = 0,
+                ["CFrame"] = CFrame.new(),
+                ["Hit"] = TargetChar.Head
+            },
+            {
+                ["RayObject"] = Ray.new(Vector3.zero, Vector3.zero),
+                ["Distance"] = 0,
+                ["CFrame"] = CFrame.new(),
+                ["Hit"] = TargetChar.Head
+            },
+            {
+                ["RayObject"] = Ray.new(Vector3.zero, Vector3.zero),
+                ["Distance"] = 0,
+                ["CFrame"] = CFrame.new(),
+                ["Hit"] = TargetChar.Head
+            },
+            {
+                ["RayObject"] = Ray.new(Vector3.zero, Vector3.zero),
+                ["Distance"] = 0,
+                ["CFrame"] = CFrame.new(),
+                ["Hit"] = TargetChar.Head
+            },
+            {
+                ["RayObject"] = Ray.new(Vector3.zero, Vector3.zero),
+                ["Distance"] = 0,
+                ["CFrame"] = CFrame.new(),
+                ["Hit"] = TargetChar.Head
+            }
         },
-        {
-            ["RayObject"] = Ray.new(TargetChar.Head.Position, TargetChar.Head.Position),
-            ["Distance"] = 0,
-            ["CFrame"] = CFrame.new(),
-            ["Hit"] = TargetChar.Head
-        },
-        {
-            ["RayObject"] = Ray.new(TargetChar.Head.Position, TargetChar.Head.Position),
-            ["Distance"] = 0,
-            ["CFrame"] = CFrame.new(),
-            ["Hit"] = TargetChar.Head
-        },
-        {
-            ["RayObject"] = Ray.new(TargetChar.Head.Position, TargetChar.Head.Position),
-            ["Distance"] = 0,
-            ["CFrame"] = CFrame.new(),
-            ["Hit"] = TargetChar.Head
-        },
-        {
-            ["RayObject"] = Ray.new(TargetChar.Head.Position, TargetChar.Head.Position),
-            ["Distance"] = 0,
-            ["CFrame"] = CFrame.new(),
-            ["Hit"] = TargetChar.Head
-        },
-        CurrentGun
-    })
+    CurrentGun)
 
     if TargetChar.Humanoid.Health > 0 then
         -- Target is still alive (unacceptable)
-        -- Solution? Beat them to death!#
+        -- Solution: beat them to death
         
         local PrevCFrame = LocalHRP.CFrame
         local Conn
