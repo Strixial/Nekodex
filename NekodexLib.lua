@@ -1,6 +1,8 @@
 local NekodexLib = {}
 
 local RunService = game:GetService("RunService")
+local HTTPService = game:GetService("HttpService")
+local Players = game:GetService("Players")
 
 NekodexLib.RunLoops = {RenderStepped = {}, Stepped = {}, Heartbeat = {}}
 local RunLoops = NekodexLib.RunLoops
@@ -46,13 +48,31 @@ do
 	end
 end
 
-local HTTPService = game:GetService("HttpService")
 function NekodexLib.TransformJSON(obj)
     if typeof(obj) == "string" then
         return HTTPService:JSONDecode(obj)
     else
         return HTTPService:JSONEncode(obj)
     end
+end
+
+function NekodexLib.HttpGet(url)
+	local request = syn.request or request
+
+	return request({Url = url})
+end
+
+function NekodexLib.GetNearestCharacter(Position)
+	local NearestPlayer, NearestDistance = nil, math.huge
+
+	for i, v in pairs(Players:GetPlayers()) do
+		if math.abs((Position - v.Character.HumanoidRootPart.Position).Magnitude) < NearestDistance then
+			NearestPlayer = v
+			NearestDistance = math.abs((Position - v.Character.HumanoidRootPart.Position).Magnitude)
+		end
+	end
+	
+	return NearestPlayer.Character
 end
 
 return NekodexLib

@@ -11,6 +11,26 @@ getgenv().RuntimeData.ESPData = {
 	Murd = false,
 	Inno = false
 }
+getgenv().RuntimeData.SheriffHacks = {
+	["Anti Team Kill"] = false, -- Prevents you from shooting innocents
+	["Racist Cop"] = false, -- Only shoots black people
+	["Stealth Gun"] = false, -- Attempts to hide the gun
+	["Silent Aim"] = false, -- Hit every time
+	["Wallbang"] = false -- Shoot through walls
+}
+
+getgenv().RuntimeData.MurdererHacks = {
+	["Kill Aura"] = false, -- Kills people around you
+	["Silent Aim"] = false, -- Uses silent aim for throwing the knife
+	["Silent Stab"] = false, -- Attempts to hide the knife when stabbing
+	["Anti Touch"] = false, -- People who touch you will be stabbed
+	["Knife Reach"] = false, -- Reach hack with the knife
+	["Racist Mode"] = false, -- Only kill black people
+	["Sexist Mode"] = false, -- Only kill women
+	["Auto Fake Gun"] = false, -- Automatically enabled the fake gun superpower
+	["Hide Knife"] = false, -- Tries to hide your knife with a toy
+	["Fast Throw"] = false, -- Reduces the animations before you throw your knife
+}
 
 local Window = Material.Load({
 	Title = "Nekodex - Murder Mystery 2",
@@ -45,6 +65,10 @@ local SheriffTab = Window.New({
 	Title = "Sheriff"
 })
 
+local InnocentTab = Window.New({
+	Title = "Innocents"
+})
+
 local RenderTab = Window.New({
 	Title = "Render"
 })
@@ -59,6 +83,10 @@ local PlayersTab = Window.New({
 
 local MiscTab = Window.New({
 	Title = "Miscellaneous"
+})
+
+local LegitTab = Window.New({
+	Title = "Legit"
 })
 
 local LocalPlayer = Players.LocalPlayer
@@ -154,37 +182,45 @@ local KillAllButton = MurdTab.Button({
 local MurdChipset = MurdTab.ChipSet({
 	Text = "Murderer Options",
 	Callback = function(Chipset)
-		for i, v in pairs(Chipset) do
-			print("Option: ", i, ", Value: ", v)
-		end
+		getgenv().RuntimeData.MurdererHacks = Chipset
 	end,
 	Options = {
-		["Kill Aura"] = false,
-		["Silent Aim"] = false,
-		["Silent Stab"] = false,
-		["Anti Touch"] = false,
-		["Auto Stab"] = false,
-		["Knife Reach"] = false
+		["Kill Aura"] = false, -- Kills people around you
+		["Silent Aim"] = false, -- Uses silent aim for throwing the knife
+		["Silent Stab"] = false, -- Attempts to hide the knife when stabbing
+		["Anti Touch"] = false, -- People who touch you will be stabbed
+		["Knife Reach"] = false, -- Reach hack with the knife
+		["Racist Mode"] = false, -- Only kill black people
+		["Sexist Mode"] = false, -- Only kill women
+		["Auto Fake Gun"] = false, -- Automatically enabled the fake gun superpower
+		["Hide Knife"] = false, -- Tries to hide your knife with a toy
+		["Fast Throw"] = false, -- Reduces the animations before you throw your knife
 	}
 })
 
 local SheriffChipset = SheriffTab.ChipSet({
 	Text = "Sheriff Options",
 	Callback = function(Chipset)
-		for i, v in pairs(Chipset) do
-			print("Option: ", i, ", Value: ", v)
-		end
+		getgenv().RuntimeData.SheriffHacks = Chipset
 	end,
 	Options = {
-		["Aimbot"] = false,
-		["Anti Team Kill"] = false,
-		["Racist Cop"] = false,
-		["Sexist Cop"] = false,
-		["Silent Aim"] = false,
-		["Wallbang"] = false
+		["Anti Team Kill"] = false, -- Prevents you from shooting innocents
+		["Racist Cop"] = false, -- Only shoots black people
+		["Stealth Gun"] = false, -- Attempts to hide the gun
+		["Silent Aim"] = false, -- Hit every time
+		["Wallbang"] = false -- Shoot through walls
 	}
 })
 
+local InnocentsChipset = InnocentTab.ChipSet({
+	Text = "Innocent Options",
+	Callback = function() end,
+	Options = {
+		["Knife Dodge"] = false,
+		["Godmode"] = false,
+		["Invisible"] = false
+	}
+})
 -- Render tab
 
 local ESPChipset = RenderTab.ChipSet({
@@ -195,7 +231,7 @@ local ESPChipset = RenderTab.ChipSet({
 				getgenv().RuntimeData.ESPData.Sheriff = v
 			elseif i == "Murderer ESP" then
 				getgenv().RuntimeData.ESPData.Murd = v
-			else
+			elseif i == "Innocents ESP" then
 				getgenv().RunService.ESPData.Inno = v
 			end
 		end
@@ -203,13 +239,24 @@ local ESPChipset = RenderTab.ChipSet({
 	Options = {
 		["Sheriff ESP"] = false,
 		["Murderer ESP"] = false,
-		["Innocents ESP"] = false
+		["Innocents ESP (no worky)"] = false
 	}
 })
 
--- ESP Render thread
+-- Update thread
 NekodexLib.RunLoops:BindToRenderStep(function()
-	
+	RefreshPlayers()
+	ToggleShaderESP(SheriffPlayer, getgenv().RuntimeData.ESPData.Sheriff)
+	ToggleShaderESP(MurdererPlayer, getgenv().RuntimeData.ESPData.Murd)
+	--ToggleShaderESP(SheriffPlayer, getgenv().RuntimeData.ESPData.Sheriff)
+
+	if getgenv().RuntimeData.MurdererHacks["Kill Aura"] == true then
+		local KilledPlayer, Distance = NekodexLib.GetNearestPlayer()
+
+		if Distance < 5 then
+			KillPlayerAsMurd(KilledPlayer)
+			KilledPlayer.Character:Destroy() -- i reckon this would help some things
+		end
 end)
 
 -- Server tab
