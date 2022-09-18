@@ -254,8 +254,8 @@ NekodexLib.RunLoops:BindToRenderStep(function()
 		local KilledPlayer, Distance = NekodexLib.GetNearestPlayer()
 
 		if Distance < 5 then
-			KillPlayerAsMurd(KilledPlayer)
-			KilledPlayer.Character:Destroy() -- i reckon this would help some things
+			KillPlayerAsMurd(KilledPlayer, getgenv().RuntimeData.MurdererHacks["Silent Stab"])
+			KilledPlayer.Character:Destroy() -- i reckon this would help this go smoother
 		end
 end)
 
