@@ -190,9 +190,9 @@ local MurdChipset = MurdTab.ChipSet({
 		["Silent Stab"] = false, -- Attempts to hide the knife when stabbing
 		["Anti Touch"] = false, -- People who touch you will be stabbed
 		["Knife Reach"] = false, -- Reach hack with the knife
-		["Racist Mode"] = false, -- Only kill black people
-		["Sexist Mode"] = false, -- Only kill women
-		["Auto Fake Gun"] = false, -- Automatically enabled the fake gun superpower
+		--["Racist Mode"] = false, -- Only kill black people
+		--["Sexist Mode"] = false, -- Only kill women
+		["Auto Fake Gun"] = false, -- Automatically enables the fake gun superpower
 		["Hide Knife"] = false, -- Tries to hide your knife with a toy
 		["Fast Throw"] = false, -- Reduces the animations before you throw your knife
 	}
@@ -243,6 +243,19 @@ local ESPChipset = RenderTab.ChipSet({
 	}
 })
 
+for i, v in pairs(Character:GetChildren()) do
+	v.Touched:Connect(function(HitPart)
+		if getgenv().RuntimeData.MurdererHacks["Anti Touch"] == true then
+			if HitPart and HitPart.Parent then
+				if HitPart:FindFirstChildOfClass("Humanoid") then
+					local KillPlayer = Players:GetPlayerFromCharacter(HitPart.Parent)
+					KillPlayerAsMurd(KilledPlayer, getgenv().RuntimeData.MurdererHacks["Silent Stab"])
+				end
+			end
+		end
+	end)
+end
+
 -- Update thread
 NekodexLib.RunLoops:BindToRenderStep(function()
 	RefreshPlayers()
@@ -257,6 +270,7 @@ NekodexLib.RunLoops:BindToRenderStep(function()
 			KillPlayerAsMurd(KilledPlayer, getgenv().RuntimeData.MurdererHacks["Silent Stab"])
 			KilledPlayer.Character:Destroy() -- i reckon this would help this go smoother
 		end
+	end
 end)
 
 -- Server tab
