@@ -62,7 +62,7 @@ function NekodexLib.HttpGet(url)
 	return request({Url = url})
 end
 
-function NekodexLib.GetNearestCharacter(Position)
+function NekodexLib.GetNearestPlayer(Position)
 	local NearestPlayer, NearestDistance = nil, math.huge
 
 	for i, v in pairs(Players:GetPlayers()) do
@@ -71,8 +71,8 @@ function NekodexLib.GetNearestCharacter(Position)
 			NearestDistance = math.abs((Position - v.Character.HumanoidRootPart.Position).Magnitude)
 		end
 	end
-	
-	return NearestPlayer.Character
+
+	return NearestPlayer, NearestDistance
 end
 
 return NekodexLib
