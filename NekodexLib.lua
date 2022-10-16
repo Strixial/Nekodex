@@ -75,4 +75,9 @@ function NekodexLib.GetNearestPlayer(Position)
 	return NearestPlayer, NearestDistance
 end
 
+function NekodexLib.CreateMaidLibrary()
+	return loadstring(game:HttpGet("https://raw.githubusercontent.com/devSparkle/Maid/main/Maid.lua"))()
+end
+
+
 return NekodexLib

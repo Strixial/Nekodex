@@ -1,5 +1,7 @@
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
-local NekodexLib = loadstring(game:HttpGet("https://github.com/Strixial/Nekodex/raw/main/NekodexLib.lua"))()
+local NekodexLib = loadstring(game:HttpGet("https://github.com/Strixial/Nekodex/raw/dev/NekodexLib.lua"))()
+local Maid = NekodexLib.GetMaidLibrary()
+local Signal = loadstring(game:HttpGet("https://github.com/Strixial/Nekodex/raw/dev/Modules/sSignal.lua"))
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
@@ -114,9 +116,12 @@ local function GetSheriff()
 	end
 end
 
+local UpdateRolesSignal = Signal.new()
 local function RefreshPlayers()
 	SheriffPlayer = GetSheriff()
 	MurdererPlayer = GetMurderer()
+
+	UpdateRolesSignal:Fire(SheriffPlayer, MurdererPlayer)
 end
 
 local function KillPlayerAsMurd(Player, HideKnifeAfter)
@@ -179,19 +184,39 @@ local KillAllButton = MurdTab.Button({
 	}
 })
 
+local AntiTouchConnection
 local MurdChipset = MurdTab.ChipSet({
 	Text = "Murderer Options",
 	Callback = function(Chipset)
 		getgenv().RuntimeData.MurdererHacks = Chipset
+
+		if getgenv().RuntimeData.MurdererHacks["Anti Touch"] == true then
+
+			AntiTouchConnection = Character.HumanoidRootPart.Touched:Connect(function(HitPart)
+				if HitPart.Parent then
+					if HitPart.Parent:FindFirstChildOfClass("Humanoid") then
+						-- Found player character
+						local Marked = Players:GetPlayerFromCharacter(HitPart.Parent)
+	
+						KillPlayerAsMurd(Marked, getgenv().RuntimeData.MurdererHacks["Silent Stab"])
+						HitPart.Parent:Destroy()
+					end
+				end
+			end)
+		else
+			AntiTouchConnection:Disconnect()
+		end
+
+		if getgenv().RuntimeData.MurdererHacks["Knife Reach"] == true then
+			
+		end
 	end,
 	Options = {
 		["Kill Aura"] = false, -- Kills people around you
 		["Silent Aim"] = false, -- Uses silent aim for throwing the knife
 		["Silent Stab"] = false, -- Attempts to hide the knife when stabbing
 		["Anti Touch"] = false, -- People who touch you will be stabbed
-		["Knife Reach"] = false, -- Reach hack with the knife
-		--["Racist Mode"] = false, -- Only kill black people
-		--["Sexist Mode"] = false, -- Only kill women
+		["Knife Reach"] = false, -- Reach further with the knife
 		["Auto Fake Gun"] = false, -- Automatically enables the fake gun superpower
 		["Hide Knife"] = false, -- Tries to hide your knife with a toy
 		["Fast Throw"] = false, -- Reduces the animations before you throw your knife
@@ -205,7 +230,6 @@ local SheriffChipset = SheriffTab.ChipSet({
 	end,
 	Options = {
 		["Anti Team Kill"] = false, -- Prevents you from shooting innocents
-		["Racist Cop"] = false, -- Only shoots black people
 		["Stealth Gun"] = false, -- Attempts to hide the gun
 		["Silent Aim"] = false, -- Hit every time
 		["Wallbang"] = false -- Shoot through walls
@@ -263,6 +287,7 @@ NekodexLib.RunLoops:BindToRenderStep(function()
 	ToggleShaderESP(MurdererPlayer, getgenv().RuntimeData.ESPData.Murd)
 	--ToggleShaderESP(SheriffPlayer, getgenv().RuntimeData.ESPData.Sheriff)
 
+	-- Killaura
 	if getgenv().RuntimeData.MurdererHacks["Kill Aura"] == true then
 		local KilledPlayer, Distance = NekodexLib.GetNearestPlayer()
 
@@ -271,6 +296,8 @@ NekodexLib.RunLoops:BindToRenderStep(function()
 			KilledPlayer.Character:Destroy() -- i reckon this would help this go smoother
 		end
 	end
+
+
 end)
 
 -- Server tab
